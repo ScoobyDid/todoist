@@ -1,0 +1,36 @@
+@use '../../utilities' as *;
+@use '../../shared/vars' as *;
+
+.select {
+  padding: 10px;
+  font-weight: 500;
+  border-radius: var(--border-radius-6);
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  -webkit-tap-highlight-color: transparent;
+  text-transform: uppercase;
+  
+  option {
+    text-transform: initial;
+    background-color: var(--color-grey);
+    color: var(--color-accent);
+  }
+  
+  &:focus {
+    box-shadow: var(--field-active-box-shadow);
+  }
+
+  @media (any-hover: hover) {
+    &:hover:not(:disabled) {
+      box-shadow: var(--field-active-box-shadow);
+    }
+  }
+
+  position: relative;
+  padding-right: 2em;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjUiIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA4IDUiPjxwYXRoIHN0cm9rZT0iI0Y3RjdGNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNNCA0IDEgMU03IDEgNCA0Ii8+PC9zdmc+');
+  background-repeat: no-repeat;
+  background-position: right 0.5em top 50%;
+  background-size: 1em auto;
+}
+

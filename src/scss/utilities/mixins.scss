@@ -1,0 +1,794 @@
+// ? helper mixins
+
+$design-max-width: 1440;
+$design-min-width: 360;
+
+@function px-em($spacing) {
+  @return #{calc($spacing / 16)}em;
+}
+
+// this is rarely-used mixin, i used it when built-in aspect-ratio had poor support
+@mixin aspect-ratio($width, $height) {
+  padding-bottom: percentage(calc($width / $height));
+}
+
+// * ---------------------------------------------------------------------------------- *
+// * ==================================  adaptive-property  =================================== *
+// * ---------------------------------------------------------------------------------- *
+
+// ? these mixins allow to have dynamic values, i.e. they will gradually turn to specified value in specified @media width,
+// ? values will gradually mutate from one to another. see examples
+
+//   !usage (examples):
+// font-size will be 20px on width specified in $design-min-width and smaller
+// font-size will be 40px on width specified in $design-max-width and bigger
+// font-size will have value between 20px and 40px on width between $design-min-width and $design-max-width
+// ?  @include adaptive-prop-short('font-size', 20, 40);
+// same as above, but with custom widths instead of $design-min-width and $design-max-width
+// ?  @include adaptive-prop-short('font-size', 20, 375, 40, 1440)
+// 20px on <= 320px width, 30px on 440px width, 40px on 500, 50px on 992, 60px on >= 1440px; md stands for media
+// this accepts up to 5 value & width pairs, you can specify less, e.g 3: @include adaptive-prop('font-size', 20, 320, 40, 500 60, 1440)
+// ?  @include adaptive-prop('font-size', 20, 320, 30, 440, 40, 500, 50, 992, 60, 1440)
+
+// adaptive-property by default is mobile-first, if you want to use desktop-first, use adaptive-font-max
+// adaptive-font-max is same as adaptive-font, but reversed, see examples
+// ?  @include adaptive-prop-max(60, 20) // max - 60px, min - 20px;
+// ?  @include adaptive-prop-max(50, 30, 1440, 375)
+// ?  @include adaptive-prop-max(60, 1440, 50, 992, 40, 440, 30, 500, 20, 320) // 60px ar 1440px, 50px at 992px and so on...
+
+// adaptive-prop accepts any property with numeric (px) values, e.g. gap, width, height, max-width, min-height,
+// every padding/margin property, top, left, inset, border-radius, letter-spacing etc.
+// ?  @include adaptive-prop('gap', 5, 320, 15, 460, 20, 768, 30, 1080)
+
+// you can also specify values lower than in prev width, e.g. here 15px gap on 460 width, but 10 px gap on 768
+// ?  @include adaptive-prop('gap', 5, 320, 15, 460, 10, 768, 30, 1080)
+
+// you can also specify sass variable instead of plain numbers. this variable should contain plain number, e.g. 10 instead of 10px
+// ? $gap-1080: 30;
+// ? $gap-768: 20;
+// ? $gap-320: 10;
+// ?  @include adaptive-prop('gap', $gap-320$, 320, $gap-768$, 768, $gap-1080, 1080)
+
+// * note: in most cases these mixins will produce a lot of redundant media queries, which will bloat css;
+// * to avoid this, gulp is set up to minify & group css media queries, 
+// * so make sure to use gulp to compile scss if you use these mixins
+
+@mixin adaptive-prop-short($prop, $min-value, $max-value, $min-width: $design-min-width, $max-width: $design-max-width) {
+  $add-value: $max-value - $min-value;
+  $total-width: $max-width - $min-width;
+
+  #{$prop}: calc(#{$min-value}px + #{$add-value} * (100vw - #{$min-width}px) / #{$total-width});
+
+  @media (width <= #{$min-width}px) {
+    #{$prop}: #{$min-value}px;
+  }
+  @media (width >= #{$max-width}px) {
+    #{$prop}: #{$max-value}px;
+  }
+}
+
+@mixin adaptive-prop-short-max($prop, $max-value, $min-value, $max-width: $design-max-width, $min-width: $design-min-width) {
+  $add-value: $max-value - $min-value;
+  $total-width: $max-width - $min-width;
+
+  #{$prop}: calc(#{$min-value}px + #{$add-value} * (100vw - #{$min-width}px) / #{$total-width});
+
+  @media (width >= #{$max-width}px) {
+    #{$prop}: #{$max-value}px;
+  }
+  @media (width <= #{$min-width}px) {
+    #{$prop}: #{$min-value}px;
+  }
+}
+
+@mixin adaptive-prop(
+  $prop,
+  $value-1,
+  $width-1,
+  $value-2,
+  $width-2,
+  $value-3: false,
+  $width-3: false,
+  $value-4: false,
+  $width-4: false,
+  $value-5: false,
+  $width-5: false,
+  $value-6: false,
+  $width-6: false,
+  $value-7: false,
+  $width-7: false,
+  $value-8: false,
+  $width-8: false,
+  $value-9: false,
+  $width-9: false,
+  $value-10: false,
+  $width-10: false
+) {
+  $add-value: $value-2 - $value-1;
+  $total-width: $width-2 - $width-1;
+
+  #{$prop}: calc(#{$value-1}px + #{$add-value} * (100vw - #{$width-1}px) / #{$total-width});
+
+  // fixes value increase on bigger screens than first breakpoint (20, 320, 30, 768, 40, 1280)
+  @media (width <= #{$width-1}px) {
+    #{$prop}: #{$value-1}px;
+  }
+
+  // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+  @if not $value-3 and not $width-3 {
+    @media (width >= #{$width-2}px) {
+      #{$prop}: #{$value-2}px;
+    }
+  }
+
+  @if $value-3 and $width-3 {
+    $add-value: $value-3 - $value-2;
+    $total-width: $width-3 - $width-2;
+
+    @media (width >= #{$width-2}px) {
+      #{$prop}: calc(#{$value-2}px + #{$add-value} * (100vw - #{$width-2}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+    @if not $value-4 and not $width-4 {
+      @media (width >= #{$width-3}px) {
+        #{$prop}: #{$value-3}px;
+      }
+    }
+  }
+
+  @if $value-4 and $width-4 {
+    $add-value: $value-4 - $value-3;
+    $total-width: $width-4 - $width-3;
+
+    @media (width >= #{$width-3}px) {
+      #{$prop}: calc(#{$value-3}px + #{$add-value} * (100vw - #{$width-3}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-5 and not $width-5 {
+      @media (width >= #{$width-4}px) {
+        #{$prop}: #{$value-4}px;
+      }
+    }
+  }
+
+  @if $value-5 and $width-5 {
+    $add-value: $value-5 - $value-4;
+    $total-width: $width-5 - $width-4;
+
+    @media (width >= #{$width-4}px) {
+      #{$prop}: calc(#{$value-4}px + #{$add-value} * (100vw - #{$width-4}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-6 and not $width-6 {
+      @media (width >= #{$width-5}px) {
+        #{$prop}: #{$value-5}px;
+      }
+    }
+  }
+
+  @if $value-6 and $width-6 {
+    $add-value: $value-6 - $value-5;
+    $total-width: $width-6 - $width-5;
+
+    @media (width >= #{$width-5}px) {
+      #{$prop}: calc(#{$value-5}px + #{$add-value} * (100vw - #{$width-5}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-7 and not $width-7 {
+      @media (width >= #{$width-6}px) {
+        #{$prop}: #{$value-6}px;
+      }
+    }
+  }
+
+  @if $value-7 and $width-7 {
+    $add-value: $value-7 - $value-6;
+    $total-width: $width-7 - $width-6;
+
+    @media (width >= #{$width-6}px) {
+      #{$prop}: calc(#{$value-6}px + #{$add-value} * (100vw - #{$width-6}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-8 and not $width-8 {
+      @media (width >= #{$width-7}px) {
+        #{$prop}: #{$value-7}px;
+      }
+    }
+  }
+
+  @if $value-8 and $width-8 {
+    $add-value: $value-8 - $value-7;
+    $total-width: $width-8 - $width-7;
+
+    @media (width >= #{$width-7}px) {
+      #{$prop}: calc(#{$value-7}px + #{$add-value} * (100vw - #{$width-7}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-9 and not $width-9 {
+      @media (width >= #{$width-8}px) {
+        #{$prop}: #{$value-8}px;
+      }
+    }
+  }
+
+  @if $value-9 and $width-9 {
+    $add-value: $value-9 - $value-8;
+    $total-width: $width-9 - $width-8;
+
+    @media (width >= #{$width-8}px) {
+      #{$prop}: calc(#{$value-8}px + #{$add-value} * (100vw - #{$width-8}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-10 and not $width-10 {
+      @media (width >= #{$width-9}px) {
+        #{$prop}: #{$value-9}px;
+      }
+    }
+  }
+
+  @if $value-10 and $width-10 {
+    $add-value: $value-10 - $value-9;
+    $total-width: $width-10 - $width-9;
+
+    @media (width >= #{$width-9}px) {
+      #{$prop}: calc(#{$value-9}px + #{$add-value} * (100vw - #{$width-9}px) / #{$total-width});
+    }
+    // it finally the last breakpoint
+    @media (width >= #{$width-5}px) {
+      #{$prop}: #{$value-5}px;
+    }
+  }
+}
+
+@mixin adaptive-prop-max(
+  $prop,
+  $value-1,
+  $width-1,
+  $value-2,
+  $width-2,
+  $value-3: false,
+  $width-3: false,
+  $value-4: false,
+  $width-4: false,
+  $value-5: false,
+  $width-5: false,
+  $value-6: false,
+  $width-6: false,
+  $value-7: false,
+  $width-7: false,
+  $value-8: false,
+  $width-8: false,
+  $value-9: false,
+  $width-9: false,
+  $value-10: false,
+  $width-10: false
+) {
+  $add-value: $value-1 - $value-2;
+  $total-width: $width-1 - $width-2;
+
+  #{$prop}: calc(#{$value-2}px + #{$add-value} * (100vw - #{$width-2}px) / #{$total-width});
+
+  // fixes font size increase on bigger screens than first breakpoint
+  @media (width >= #{$width-1}px) {
+    #{$prop}: #{$value-1}px;
+  }
+
+  // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+  @if not $value-3 and not $width-3 {
+    @media (width <= #{$width-2}px) {
+      #{$prop}: #{$value-2}px;
+    }
+  }
+
+  @if $value-3 and $width-3 {
+    $add-value: $value-2 - $value-3;
+    $total-width: $width-2 - $width-3;
+
+    @media (width <= #{$width-2}px) {
+      #{$prop}: calc(#{$value-3}px + #{$add-value} * (100vw - #{$width-3}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+    @if not $value-4 and not $width-4 {
+      @media (width <= #{$width-3}px) {
+        #{$prop}: #{$value-3}px;
+      }
+    }
+  }
+
+  @if $value-4 and $width-4 {
+    $add-value: $value-3 - $value-4;
+    $total-width: $width-3 - $width-4;
+
+    @media (width <= #{$width-3}px) {
+      #{$prop}: calc(#{$value-4}px + #{$add-value} * (100vw - #{$width-4}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-5 and not $width-5 {
+      @media (width <= #{$width-4}px) {
+        #{$prop}: #{$value-4}px;
+      }
+    }
+  }
+
+  @if $value-5 and $width-5 {
+    $add-value: $value-4 - $value-5;
+    $total-width: $width-4 - $width-5;
+
+    @media (width <= #{$width-4}px) {
+      #{$prop}: calc(#{$value-5}px + #{$add-value} * (100vw - #{$width-5}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-6 and not $width-6 {
+      @media (width <= #{$width-5}px) {
+        #{$prop}: #{$value-5}px;
+      }
+    }
+  }
+
+  @if $value-6 and $width-6 {
+    $add-value: $value-5 - $value-6;
+    $total-width: $width-5 - $width-6;
+
+    @media (width <= #{$width-5}px) {
+      #{$prop}: calc(#{$value-6}px + #{$add-value} * (100vw - #{$width-6}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-7 and not $width-7 {
+      @media (width <= #{$width-6}px) {
+        #{$prop}: #{$value-6}px;
+      }
+    }
+  }
+
+  @if $value-7 and $width-7 {
+    $add-value: $value-6 - $value-7;
+    $total-width: $width-6 - $width-7;
+
+    @media (width <= #{$width-6}px) {
+      #{$prop}: calc(#{$value-7}px + #{$add-value} * (100vw - #{$width-7}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-8 and not $width-8 {
+      @media (width <= #{$width-7}px) {
+        #{$prop}: #{$value-7}px;
+      }
+    }
+  }
+
+  @if $value-8 and $width-8 {
+    $add-value: $value-7 - $value-8;
+    $total-width: $width-7 - $width-8;
+
+    @media (width <= #{$width-7}px) {
+      #{$prop}: calc(#{$value-8}px + #{$add-value} * (100vw - #{$width-8}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-9 and not $width-9 {
+      @media (width <= #{$width-8}px) {
+        #{$prop}: #{$value-8}px;
+      }
+    }
+  }
+
+  @if $value-9 and $width-9 {
+    $add-value: $value-8 - $value-9;
+    $total-width: $width-8 - $width-9;
+
+    @media (width <= #{$width-9}px) {
+      #{$prop}: calc(#{$value-9}px + #{$add-value} * (100vw - #{$width-9}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-10 and not $width-10 {
+      @media (width <= #{$width-9}px) {
+        #{$prop}: #{$value-9}px;
+      }
+    }
+  }
+
+  @if $value-10 and $width-10 {
+    $add-value: $value-9 - $value-10;
+    $total-width: $width-9 - $width-10;
+
+    @media (width <= #{$width-10}px) {
+      #{$prop}: calc(#{$value-10}px + #{$add-value} * (100vw - #{$width-10}px) / #{$total-width});
+    }
+
+    // it is finally the last breakpoint
+    @media (width <= #{$width-10}px) {
+      #{$prop}: #{$value-10}px;
+    }
+  }
+}
+
+// * ---------------------------------------------------------------------------------- *
+// * ==================================  adaptive-variable  =================================== *
+// * ---------------------------------------------------------------------------------- *
+
+// ?  adaptive-var works same as adaptive-prop, but you get css variable instead of property,
+// ?  this in more flexible since you can use this variable however you want,
+// ?  e.g. set to multiple properties, or use in calc()
+
+//   !usage (examples):
+// ?  @include adaptive-var-short('products-grid-gap', 10, 20, 320, 768);
+// ?  gap: calc(var(--products-grid-gap) + 20px);
+
+// ?  @include adaptive-var('navbar-padding', 10, 360, 20, 768, 40, 1440);
+// ?  padding-right: var(--navbar-padding);
+// ?  padding-top: var(--navbar-padding);
+// ?  padding-bottom: var(--navbar-padding);
+
+// ?  .gallery { @include adaptive-var('gallery-gap', 10, 360, 20, 768, 40, 1440); }
+// ?  .gallery__item { flex: 1 1 calc(50% - var(--gallery-gap)); }
+
+// ?  $gap-1440: 50;
+// ?  $gap-992: 40;
+// ?  $gap-768: 30;
+// ?  $gap-360: 15;
+// ?  @include adaptive-var-max('grid-gap', $gap-1440, 1440, $gap-992, 992, $gap-768, 768, $gap-360, 360);
+// ?  gap: var(--products-grid-gap);
+// ?  .gallery__item { flex: 1 1 calc(50% - var(--gallery-gap)); }
+
+@mixin adaptive-var-short($varName, $min-value, $max-value, $min-width: $design-min-width, $max-width: $design-max-width) {
+  $add-value: $max-value - $min-value;
+  $total-width: $max-width - $min-width;
+
+  --#{$varName}: calc(#{$min-value}px + #{$add-value} * (100vw - #{$min-width}px) / #{$total-width});
+
+  @media (width <= #{$min-width}px) {
+    --#{$varName}: #{$min-value}px;
+  }
+  @media (width >= #{$max-width}px) {
+    --#{$varName}: #{$max-value}px;
+  }
+}
+
+@mixin adaptive-var-short-max($varName, $max-value, $min-value, $max-width: $design-max-width, $min-width: $design-min-width) {
+  $add-value: $max-value - $min-value;
+  $total-width: $max-width - $min-width;
+
+  --#{$varName}: calc(#{$min-value}px + #{$add-value} * (100vw - #{$min-width}px) / #{$total-width});
+
+  @media (width >= #{$max-width}px) {
+    --#{$varName}: #{$max-value}px;
+  }
+  @media (width <= #{$min-width}px) {
+    --#{$varName}: #{$min-value}px;
+  }
+}
+
+@mixin adaptive-var(
+  $varName,
+  $value-1,
+  $width-1,
+  $value-2,
+  $width-2,
+  $value-3: false,
+  $width-3: false,
+  $value-4: false,
+  $width-4: false,
+  $value-5: false,
+  $width-5: false,
+  $value-6: false,
+  $width-6: false,
+  $value-7: false,
+  $width-7: false,
+  $value-8: false,
+  $width-8: false,
+  $value-9: false,
+  $width-9: false,
+  $value-10: false,
+  $width-10: false
+) {
+  $add-value: $value-2 - $value-1;
+  $total-width: $width-2 - $width-1;
+
+  --#{$varName}: calc(#{$value-1}px + #{$add-value} * (100vw - #{$width-1}px) / #{$total-width});
+
+  // fixes value increase on bigger screens than first breakpoint (20, 320, 30, 768, 40, 1280)
+  @media (width <= #{$width-1}px) {
+    --#{$varName}: #{$value-1}px;
+  }
+
+  // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+  @if not $value-3 and not $width-3 {
+    @media (width >= #{$width-2}px) {
+      --#{$varName}: #{$value-2}px;
+    }
+  }
+
+  @if $value-3 and $width-3 {
+    $add-value: $value-3 - $value-2;
+    $total-width: $width-3 - $width-2;
+
+    @media (width >= #{$width-2}px) {
+      --#{$varName}: calc(#{$value-2}px + #{$add-value} * (100vw - #{$width-2}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+    @if not $value-4 and not $width-4 {
+      @media (width >= #{$width-3}px) {
+        --#{$varName}: #{$value-3}px;
+      }
+    }
+  }
+
+  @if $value-4 and $width-4 {
+    $add-value: $value-4 - $value-3;
+    $total-width: $width-4 - $width-3;
+
+    @media (width >= #{$width-3}px) {
+      --#{$varName}: calc(#{$value-3}px + #{$add-value} * (100vw - #{$width-3}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-5 and not $width-5 {
+      @media (width >= #{$width-4}px) {
+        --#{$varName}: #{$value-4}px;
+      }
+    }
+  }
+
+  @if $value-5 and $width-5 {
+    $add-value: $value-5 - $value-4;
+    $total-width: $width-5 - $width-4;
+
+    @media (width >= #{$width-4}px) {
+      --#{$varName}: calc(#{$value-4}px + #{$add-value} * (100vw - #{$width-4}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-6 and not $width-6 {
+      @media (width >= #{$width-5}px) {
+        --#{$varName}: #{$value-5}px;
+      }
+    }
+  }
+
+  @if $value-6 and $width-6 {
+    $add-value: $value-6 - $value-5;
+    $total-width: $width-6 - $width-5;
+
+    @media (width >= #{$width-5}px) {
+      --#{$varName}: calc(#{$value-5}px + #{$add-value} * (100vw - #{$width-5}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-7 and not $width-7 {
+      @media (width >= #{$width-6}px) {
+        --#{$varName}: #{$value-6}px;
+      }
+    }
+  }
+
+  @if $value-7 and $width-7 {
+    $add-value: $value-7 - $value-6;
+    $total-width: $width-7 - $width-6;
+
+    @media (width >= #{$width-6}px) {
+      --#{$varName}: calc(#{$value-6}px + #{$add-value} * (100vw - #{$width-6}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-8 and not $width-8 {
+      @media (width >= #{$width-7}px) {
+        --#{$varName}: #{$value-7}px;
+      }
+    }
+  }
+
+  @if $value-8 and $width-8 {
+    $add-value: $value-8 - $value-7;
+    $total-width: $width-8 - $width-7;
+
+    @media (width >= #{$width-7}px) {
+      --#{$varName}: calc(#{$value-7}px + #{$add-value} * (100vw - #{$width-7}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-9 and not $width-9 {
+      @media (width >= #{$width-8}px) {
+        --#{$varName}: #{$value-8}px;
+      }
+    }
+  }
+
+  @if $value-9 and $width-9 {
+    $add-value: $value-9 - $value-8;
+    $total-width: $width-9 - $width-8;
+
+    @media (width >= #{$width-8}px) {
+      --#{$varName}: calc(#{$value-8}px + #{$add-value} * (100vw - #{$width-8}px) / #{$total-width});
+    }
+    // if it is last breakpoint
+    @if not $value-10 and not $width-10 {
+      @media (width >= #{$width-9}px) {
+        --#{$varName}: #{$value-9}px;
+      }
+    }
+  }
+
+  @if $value-10 and $width-10 {
+    $add-value: $value-10 - $value-9;
+    $total-width: $width-10 - $width-9;
+
+    @media (width >= #{$width-9}px) {
+      --#{$varName}: calc(#{$value-9}px + #{$add-value} * (100vw - #{$width-9}px) / #{$total-width});
+    }
+    // it finally the last breakpoint
+    @media (width >= #{$width-5}px) {
+      --#{$varName}: #{$value-5}px;
+    }
+  }
+}
+
+@mixin adaptive-var-max(
+  $varName,
+  $value-1,
+  $width-1,
+  $value-2,
+  $width-2,
+  $value-3: false,
+  $width-3: false,
+  $value-4: false,
+  $width-4: false,
+  $value-5: false,
+  $width-5: false,
+  $value-6: false,
+  $width-6: false,
+  $value-7: false,
+  $width-7: false,
+  $value-8: false,
+  $width-8: false,
+  $value-9: false,
+  $width-9: false,
+  $value-10: false,
+  $width-10: false
+) {
+  $add-value: $value-1 - $value-2;
+  $total-width: $width-1 - $width-2;
+
+  --#{$varName}: calc(#{$value-2}px + #{$add-value} * (100vw - #{$width-2}px) / #{$total-width});
+
+  // fixes font size increase on bigger screens than first breakpoint
+  @media (width >= #{$width-1}px) {
+    --#{$varName}: #{$value-1}px;
+  }
+
+  // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+  @if not $value-3 and not $width-3 {
+    @media (width <= #{$width-2}px) {
+      --#{$varName}: #{$value-2}px;
+    }
+  }
+
+  @if $value-3 and $width-3 {
+    $add-value: $value-2 - $value-3;
+    $total-width: $width-2 - $width-3;
+
+    @media (width <= #{$width-2}px) {
+      --#{$varName}: calc(#{$value-3}px + #{$add-value} * (100vw - #{$width-3}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint (fixes font size reduction on smaller screens than last breakpoint)
+    @if not $value-4 and not $width-4 {
+      @media (width <= #{$width-3}px) {
+        --#{$varName}: #{$value-3}px;
+      }
+    }
+  }
+
+  @if $value-4 and $width-4 {
+    $add-value: $value-3 - $value-4;
+    $total-width: $width-3 - $width-4;
+
+    @media (width <= #{$width-3}px) {
+      --#{$varName}: calc(#{$value-4}px + #{$add-value} * (100vw - #{$width-4}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-5 and not $width-5 {
+      @media (width <= #{$width-4}px) {
+        --#{$varName}: #{$value-4}px;
+      }
+    }
+  }
+
+  @if $value-5 and $width-5 {
+    $add-value: $value-4 - $value-5;
+    $total-width: $width-4 - $width-5;
+
+    @media (width <= #{$width-4}px) {
+      --#{$varName}: calc(#{$value-5}px + #{$add-value} * (100vw - #{$width-5}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-6 and not $width-6 {
+      @media (width <= #{$width-5}px) {
+        --#{$varName}: #{$value-5}px;
+      }
+    }
+  }
+
+  @if $value-6 and $width-6 {
+    $add-value: $value-5 - $value-6;
+    $total-width: $width-5 - $width-6;
+
+    @media (width <= #{$width-5}px) {
+      --#{$varName}: calc(#{$value-6}px + #{$add-value} * (100vw - #{$width-6}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-7 and not $width-7 {
+      @media (width <= #{$width-6}px) {
+        --#{$varName}: #{$value-6}px;
+      }
+    }
+  }
+
+  @if $value-7 and $width-7 {
+    $add-value: $value-6 - $value-7;
+    $total-width: $width-6 - $width-7;
+
+    @media (width <= #{$width-6}px) {
+      --#{$varName}: calc(#{$value-7}px + #{$add-value} * (100vw - #{$width-7}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-8 and not $width-8 {
+      @media (width <= #{$width-7}px) {
+        --#{$varName}: #{$value-7}px;
+      }
+    }
+  }
+
+  @if $value-8 and $width-8 {
+    $add-value: $value-7 - $value-8;
+    $total-width: $width-7 - $width-8;
+
+    @media (width <= #{$width-7}px) {
+      --#{$varName}: calc(#{$value-8}px + #{$add-value} * (100vw - #{$width-8}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-9 and not $width-9 {
+      @media (width <= #{$width-8}px) {
+        --#{$varName}: #{$value-8}px;
+      }
+    }
+  }
+
+  @if $value-9 and $width-9 {
+    $add-value: $value-8 - $value-9;
+    $total-width: $width-8 - $width-9;
+
+    @media (width <= #{$width-9}px) {
+      --#{$varName}: calc(#{$value-9}px + #{$add-value} * (100vw - #{$width-9}px) / #{$total-width});
+    }
+
+    // if it is last breakpoint
+    @if not $value-10 and not $width-10 {
+      @media (width <= #{$width-9}px) {
+        --#{$varName}: #{$value-9}px;
+      }
+    }
+  }
+
+  @if $value-10 and $width-10 {
+    $add-value: $value-9 - $value-10;
+    $total-width: $width-9 - $width-10;
+
+    @media (width <= #{$width-10}px) {
+      --#{$varName}: calc(#{$value-10}px + #{$add-value} * (100vw - #{$width-10}px) / #{$total-width});
+    }
+
+    // it is finally the last breakpoint
+    @media (width <= #{$width-10}px) {
+      --#{$varName}: #{$value-10}px;
+    }
+  }
+}

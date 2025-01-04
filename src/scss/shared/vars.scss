@@ -1,0 +1,123 @@
+/* * --------------------------------------------------------------------------------------------- * */
+/* * ========================================  VARIABLES  ======================================== * */
+/* * --------------------------------------------------------------------------------------------- * */
+
+:root {
+  /* container that limits the width of the section */
+  --container-padding-horizontal: 10px;
+  --container-max-width: calc(750px + 2 * var(--container-padding-horizontal));
+
+  /* font-family */
+  --font-family-main: 'Kanit', georgia, sans-serif;
+  --font-family-title: 'Kanit', georgia, sans-serif;
+  --font-family-alt: 'Inter', sans-serif;
+
+  /* color palette */
+  --color-white: #fff;
+  --color-nero: #252525;
+  --color-violet: #6c63ff;
+  --color-grey: #f7f7f7;
+  --color-muted: #c3c1e5;
+  --color-muted-alt: #cdcdcd;
+
+  --color-grey-1: #e9e9e9;
+  --color-grey-2: #d9d9d9;
+  --color-half-muted: #999;
+
+  --color-black: #000;
+  --color-dark-0: #1a1a1a;
+  --color-dark-1: #222;
+  --color-dark-2: #3b3b3b;
+  --color-lava-red: #e41421;
+  --color-milk: #f5f7f0;
+  --color-wine-red: #791727;
+  --color-tan: #ddb892;
+  --color-sapphire-blue: #2260e5;
+  --color-light-green: #e4ffe6;
+
+  /* color palette - more specific */
+  --color-accent: var(--color-violet);
+  --color-accent--secondary: #534cc2;
+  --color-bg-main: var(--color-grey);
+  --color-text-common: var(--color-nero);
+  --color-title: var(--color-nero);
+  --color-danger: var(--color-lava-red);
+  --color-info: var(--color-sapphire-blue);
+  --color-success: #00ef0a;
+  --color-warning: #ffc064;
+  --color-warning-darker: #cf913a;
+  --color-bg-placeholder: #eee;
+
+  /* form */
+  --field-active-box-shadow: 0 0 0 1px var(--color-accent--secondary);
+
+  /* line-height */
+  --line-height-text: 1.4;
+  --line-height-title: 1.2;
+
+  /* z-index */
+  --z-index-md: 10;
+  --z-index-lg: 20;
+  --z-index-xlg: 30;
+  --z-index-2xlg: 40;
+  --z-index-3xlg: 50;
+  --z-index-top-layer: 9999999999;
+
+  /* border-radius */
+  --border-radius-4: 4px;
+  --border-radius-6: 6px;
+  --border-radius-8: 8px;
+  --border-radius-12: 12px;
+  --border-radius-16: 16px;
+  --border-radius-20: 20px;
+
+  /* transitions */
+  --transition-2xsm: 100ms;
+  --transition-xsm: 200ms;
+  --transition-sm: 300ms; /* most often used */
+  --transition-md: 500ms;
+  --transition-lg: 800ms;
+  --transition-xlg: 1000ms;
+  --transition-2xlg: 1500ms;
+  --transition-delay-2xsm: 50ms;
+  --transition-delay-xsm: 100ms;
+  --transition-delay-sm: 150ms;
+  --transition-delay-md: 200ms;
+  --transition-delay-lg: 300ms;
+  --transition-delay-xlg: 400ms;
+  --transition-delay-2xlg: 500ms;
+
+  @media (prefers-reduced-motion: reduce) {
+    --transition-2xsm: 0s;
+    --transition-xsm: 0s;
+    --transition-sm: 0s;
+    --transition-md: 0s;
+    --transition-lg: 0s;
+    --transition-xlg: 0s;
+    --transition-xxlg: 0s;
+    --transition-delay-xxsm: 0s;
+    --transition-delay-xsm: 0s;
+    --transition-delay-sm: 0s;
+    --transition-delay-md: 0s;
+    --transition-delay-lg: 0s;
+    --transition-delay-xlg: 0s;
+    --transition-delay-2xlg: 0s;
+  }
+
+  /* easing */
+  --easing-default: ease;
+  --easing-linear: linear;
+  --easing-in: ease-in;
+  --easing-out: ease-out;
+  --easing-in-out: ease-in-out;
+  --easing-sharp: cubic-bezier(0.23, 1, 0.32, 1);
+  --easing-out-back: cubic-bezier(0.25, -0.25, 0.75, 1.25);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --easing-bounce-out: cubic-bezier(0.61, 0.01, 0.47, 1.52);
+  --easing-bounce-in: cubic-bezier(0.63, -0.55, 0.36, 0.97);
+  --easing-bounce-soft: cubic-bezier(0.6, 0.33, 0.67, 1.29);
+
+  /* focus-visible styles (for better accessibility) */
+  --focus-visible-outline: 3px dashed #000;
+  --focus-visible-box-shadow: 0 0 0 3px #fff;
+}

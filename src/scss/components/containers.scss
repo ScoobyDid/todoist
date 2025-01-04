@@ -1,0 +1,10 @@
+@use '../utilities' as *;
+@use '../shared/vars' as *;
+
+.container {
+  max-width: var(--container-max-width);
+  padding-right: var(--container-padding-horizontal);
+  padding-left: var(--container-padding-horizontal);
+  margin: 0 auto;
+}
+

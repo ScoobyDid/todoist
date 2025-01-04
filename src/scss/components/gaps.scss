@@ -1,0 +1,7 @@
+@use '../utilities' as *;
+@use '../shared/vars' as *;
+
+.section-gap-md {
+  @include adaptive-prop('padding-top', 24, 320, 40, 1400);
+  @include adaptive-prop('padding-bottom', 24, 320, 40, 1400);
+}

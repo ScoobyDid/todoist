@@ -1,0 +1,154 @@
+@use '../../utilities' as *;
+@use '../../shared/vars' as *;
+
+.todo {
+  &__title {
+    margin-bottom: 18px;
+  }
+  &__form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 13px;
+  }
+
+  &__search-wrapper {
+    flex: 1 1 auto;
+    position: relative;
+  }
+
+  &__search {
+    width: 100%;
+    padding: 8px 16px;
+    padding-right: 48px;
+
+    &-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 22px;
+      color: var(--color-accent);
+
+      &:active[class] {
+        transform: translateY(-50%) scale(1.16);
+      }
+    }
+  }
+
+  &__theme-switch {
+    cursor: pointer;
+    color: var(--color-white);
+    display: inline-block;
+    border-radius: var(--border-radius-6);
+    width: 38px;
+    height: 38px;
+    background-color: var(--color-accent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:has(input:focus-visible) {
+      outline: var(--focus-visible-outline);
+      box-shadow: var(--focus-visible-box-shadow);
+    }
+  }
+
+  &__add {
+    position: fixed;
+    bottom: 32px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-accent);
+    right: calc((100vw - var(--container-max-width)) / 2);
+    border-radius: 50%;
+    border: 2px solid var(--color-accent--secondary);
+    color: var(--color-white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media (any-hover: hover) {
+      &:hover {
+        filter: saturate(1.4) brightness(1.2);
+      }
+    }
+
+    &-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.todo-list {
+  max-width: 520px;
+  margin: 0 auto;
+
+  &__li {
+    padding: 17px 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #b1acfb;
+    }
+
+    .checkbox {
+      padding: 4px;
+      margin-left: -4px;
+    }
+
+    @media (any-hover: hover) {
+      &:hover {
+        .todo-list__actions {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  &__text {
+    flex: 1 1 auto;
+    font-weight: 500;
+    @include adaptive-prop('font-size', 16, 320, 20, 1400);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+
+    &:focus-within {
+      opacity: 1;
+    }
+  }
+
+  &__action-btn {
+    color: var(--color-muted-alt);
+    padding: 5px;
+
+    &-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    @media (any-hover: hover) {
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+
+    &:active[class] {
+      transform: scale(1.16);
+    }
+  }
+}

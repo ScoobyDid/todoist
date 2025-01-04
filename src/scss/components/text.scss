@@ -1,0 +1,149 @@
+@use '../utilities' as *;
+@use '../shared/vars' as *;
+
+.title {
+  font-family: var(--font-family-title);
+  color: var(--color-title);
+  font-weight: 500;
+}
+
+.ff-alt {
+  font-family: var(--font-family-alt);
+}
+
+.up {
+  text-transform: uppercase;
+}
+
+:where(.fsz-title-xlg, .fsz-title-lg, .fsz-title-md) {
+  line-height: var(--line-height-title);
+}
+
+.fsz-title-md {
+  @include adaptive-prop('font-size', 18, 320, 26, 1400);
+}
+
+.fsz-text-xlg {
+  font-size: 20px;
+}
+
+.fsz-text-lg {
+  font-size: 18px;
+}
+
+.fsz-text-md {
+  font-size: 16px;
+}
+
+.fsz-text-sm {
+  font-size: 14px;
+}
+
+.fsz-text-xsm {
+  font-size: 13px;
+}
+
+.fsz-text-2xsm {
+  font-size: 12px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.center {
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+
+.max-ch-25 {
+  max-width: 25ch;
+}
+
+.max-ch-30 {
+  max-width: 30ch;
+}
+
+.max-ch-40 {
+  max-width: 40ch;
+}
+
+.overflow-wrap {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.nowrap {
+  word-break: keep-all;
+  white-space: nowrap;
+}
+
+.fsz-title-lg {
+  @include adaptive-prop('font-size', 32, 320, 40, 1350);
+}
+
+.fsz-title-xlg {
+  @include adaptive-prop('font-size', 34, 320, 52, 1350);
+}
+
+.fw-bold {
+  font-weight: 700;
+}
+
+.fw-medium {
+  font-weight: 500;
+}
+
+.fw-regular {
+  font-weight: 400;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.color-danger {
+  color: var(--color-danger);
+}
+
+.color-common {
+  color: var(--color-text-common);
+}
+
+.color-muted {
+  color: var(--color-muted);
+}
+
+.color-info {
+  color: var(--color-info);
+}
+
+.color-warning {
+  color: var(--color-warning-darker);
+}
+
+.color-half-muted {
+  color: var(--color-half-muted);
+}
+
+.max-ch-45 {
+  max-width: 45ch;
+}
+
+.max-ch-60 {
+  max-width: 60ch;
+}
+
+.max-ch-75 {
+  max-width: 75ch;
+}
+
+.formatted-li--sub {
+  list-style-type: disc;
+}
+
+.formatted-sublist {
+  padding-left: 2.2em;
+}
+

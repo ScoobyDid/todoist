@@ -1,0 +1,303 @@
+/*
+* -------------------------------------------------------------------------------------------- *
+* ======================================  RESET STYLES  ====================================== *
+* -------------------------------------------------------------------------------------------- *
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+:where(::before, ::after) {
+  content: '';
+}
+
+html,
+body {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  line-height: 1;
+}
+
+a {
+  font: inherit;
+  color: inherit;
+  touch-action: manipulation;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+svg {
+  // make them a-bit-responsive & remove empty space in bottom
+  max-width: 100%;
+  vertical-align: top;
+}
+
+:where(img, video, canvas, audio, iframe, embed, object) {
+  // make them a-bit-responsive & remove empty space in bottom (but display: block)
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+:where(img, picture, video, canvas) {
+  user-select: none;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  font: inherit;
+  overflow-wrap: break-word;
+}
+
+:where(input, button, textarea, select) {
+  font: inherit;
+  font-size: 100%;
+  color: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+:where(input, textarea) {
+  min-width: 0;
+}
+
+select {
+  color: #000;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 0;
+}
+
+button {
+  color: inherit;
+  -webkit-appearance: button;
+  -webkit-tap-highlight-color: transparent;
+  appearance: button;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+html {
+  -moz-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+}
+
+// Remove the inheritance of text transform in Edge and Firefox.
+button,
+select {
+  text-transform: none;
+}
+
+[inert] {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+:where(:disabled, [aria-disabled]) {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.7;
+}
+
+:where(
+    audio,
+    button,
+    canvas,
+    details,
+    iframe,
+    input,
+    select,
+    summary,
+    textarea,
+    video,
+    [accesskey],
+    [contenteditable],
+    [href],
+    [tabindex]
+  ):focus-visible {
+  z-index: var(--z-index-top-layer);
+  outline: var(--focus-visible-outline);
+  box-shadow: var(--focus-visible-box-shadow);
+}
+
+:where(
+    input[type='text'],
+    input[type='email'],
+    input[type='password'],
+    input[type='number'],
+    input[type='search'],
+    input[type='tel'],
+    input[type='url'],
+    input[type='datetime'],
+    input[type='date'],
+    select,
+    textarea
+  ):focus {
+  z-index: auto;
+  outline: none;
+  box-shadow: none;
+}
+
+a:active {
+  outline: none;
+}
+
+:where(a, a:active, a:visited) {
+  text-decoration: none;
+}
+
+:where(ul, li) {
+  list-style: none;
+}
+
+:where(input[type='checkbox'], input[type='radio'], select) {
+  cursor: pointer;
+}
+
+img {
+  font-style: italic;
+}
+
+table {
+  text-indent: 0;
+  border-collapse: collapse;
+  border-color: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+dialog {
+  inset: unset;
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  border: none;
+}
+
+mark {
+  color: inherit;
+}
+
+em {
+  font-style: normal;
+}
+
+small {
+  font-size: 80%;
+}
+
+:where(pre, code, kbd, samp) {
+  font-family: monospace;
+  font-size: 1em;
+}
+
+:where(sub, sup) {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+input::ms-clear {
+  display: none;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  padding: 0;
+  border-style: none;
+}
+
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
+  margin-left: 4px;
+}
+
+//  Correct the cursor style of increment and decrement buttons in Chrome.
+
+:where([type='number']::-webkit-inner-spin-button, [type='number']::-webkit-outer-spin-button) {
+  height: auto;
+}
+
+// 1. Correct the odd appearance in Chrome and Safari.
+// 2. Correct the outline style in Safari.
+// 3. Remove the inner padding in Chrome and Safari on macOS.
+
+[type='search'] {
+  -webkit-appearance: textfield; // 1
+  appearance: textfield; // 1
+  outline-offset: -2px; // 2
+
+  &::-webkit-search-decoration {
+    -webkit-appearance: none; // 3
+  }
+}
+
+// 1. Correct the inability to style clickable types in iOS and Safari.
+// 2. Change font properties to `inherit` in Safari.
+
+::-webkit-file-upload-button {
+  font: inherit; // 2
+  -webkit-appearance: button; // 1
+}
+
+// Add the correct display in Edge and Firefox.
+
+details {
+  display: block;
+}
+
+// Add the correct display in all browsers.
+
+summary {
+  display: list-item;
+}

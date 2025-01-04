@@ -1,0 +1,45 @@
+@use '../../utilities' as *;
+@use '../../shared/vars' as *;
+
+.input {
+  max-width: 100%;
+  padding: 8px;
+  background-color: var(--color-grey);
+  border-radius: var(--border-radius-6);
+  box-shadow: 0 0 0 1px var(--color-accent);
+  transition: var(--transition-xsm) var(--easing-in-out);
+  transition-property: background-color, color;
+  font-family: var(--font-family-alt);
+
+  &::placeholder {
+    color: var(--color-muted);
+    transition: color var(--transition-xsm) var(--easing-in-out);
+  }
+
+  &:focus {
+    background-color: var(--color-white);
+    box-shadow: var(--field-active-box-shadow);
+    animation: box-shadow-pulse var(--transition-sm) var(--easing-in-out);
+  }
+
+  @media (any-hover: hover) {
+    &:hover:not(:disabled) {
+      box-shadow: var(--field-active-box-shadow);
+    }
+  }
+}
+
+@keyframes box-shadow-pulse {
+  0% {
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  50% {
+    box-shadow: 0 0 0 3px var(--color-accent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+}
+

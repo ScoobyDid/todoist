@@ -1,0 +1,78 @@
+@use '../../utilities' as *;
+@use '../../shared/vars' as *;
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  transition: transform var(--transition-sm) var(--easing-default);
+
+  &:active:active {
+    transform: scale(1.06);
+  }
+}
+
+.btn-accent {
+  --btn-accent-easing: var(--easing-sharp);
+  --btn-accent-transition-duration: var(--transition-sm);
+
+  position: relative;
+  font-weight: 500;
+  isolation: isolate;
+  border-radius: var(--border-radius-6);
+  transition: var(--btn-accent-transition-duration) var(--btn-accent-easing);
+  transition-property: background-color, opacity, filter, color, transform;
+  @include adaptive-prop('font-size', 14, 320, 18, 1350);
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: '';
+    border-radius: inherit;
+    box-shadow: rgb(0 0 0 / 0.25) 0 0px 4px;
+    opacity: 0;
+    transition: opacity var(--btn-accent-transition-duration) var(--btn-accent-easing);
+  }
+
+  @media (any-hover: hover) {
+    &:hover {
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+
+  &:active:active {
+    opacity: 0.9;
+
+    &::after {
+      opacity: 0.3;
+    }
+  }
+
+  &--filled {
+    color: var(--color-white);
+    background-color: var(--color-accent);
+
+    @media (any-hover: hover) {
+      &:hover {
+        background-color: var(--color-accent);
+        filter: saturate(1.4) brightness(1.2);
+      }
+    }
+  }
+
+  &--hollow {
+    color: var(--color-dark-2);
+    background-color: transparent;
+    border: 2px solid var(--color-dark-0);
+
+    @media (any-hover: hover) {
+      &:hover {
+        color: var(--color-white);
+        background-color: var(--color-dark-1);
+        filter: none;
+      }
+    }
+  }
+}
