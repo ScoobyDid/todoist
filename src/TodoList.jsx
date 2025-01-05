@@ -12,7 +12,7 @@ export function TodoList({ todos, toggleTodo, deleteTodo }) {
     <ul className='todo__list todo-list'>
       {todos.length === 0 && (
         <li className='todo-list__li todo-list__no-results'>
-          <img className='todo-list__no-results-image' src='/src/images/detective.png' alt='No notes' />
+          <img className='todo-list__no-results-image' src='/public/detective.png' alt='No notes' />
           <p className='todo-list__no-results-text'>Empty...</p>
         </li>
       )}
