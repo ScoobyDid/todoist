@@ -63,14 +63,14 @@
   }
 
   &--hollow {
-    color: var(--color-dark-2);
+    color: var(--color-accent);
     background-color: transparent;
-    border: 2px solid var(--color-dark-0);
+    border: 2px solid var(--color-accent);
 
     @media (any-hover: hover) {
       &:hover {
         color: var(--color-white);
-        background-color: var(--color-dark-1);
+        background-color: var(--color-accent--secondary);
         filter: none;
       }
     }

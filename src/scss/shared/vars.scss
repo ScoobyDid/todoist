@@ -20,33 +20,12 @@
   --color-muted: #c3c1e5;
   --color-muted-alt: #cdcdcd;
 
-  --color-grey-1: #e9e9e9;
-  --color-grey-2: #d9d9d9;
-  --color-half-muted: #999;
-
-  --color-black: #000;
-  --color-dark-0: #1a1a1a;
-  --color-dark-1: #222;
-  --color-dark-2: #3b3b3b;
-  --color-lava-red: #e41421;
-  --color-milk: #f5f7f0;
-  --color-wine-red: #791727;
-  --color-tan: #ddb892;
-  --color-sapphire-blue: #2260e5;
-  --color-light-green: #e4ffe6;
-
   /* color palette - more specific */
   --color-accent: var(--color-violet);
   --color-accent--secondary: #534cc2;
   --color-bg-main: var(--color-grey);
   --color-text-common: var(--color-nero);
   --color-title: var(--color-nero);
-  --color-danger: var(--color-lava-red);
-  --color-info: var(--color-sapphire-blue);
-  --color-success: #00ef0a;
-  --color-warning: #ffc064;
-  --color-warning-darker: #cf913a;
-  --color-bg-placeholder: #eee;
 
   /* form */
   --field-active-box-shadow: 0 0 0 1px var(--color-accent--secondary);

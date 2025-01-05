@@ -1,0 +1,31 @@
+@use '../../utilities' as *;
+@use '../../shared/vars' as *;
+
+.modal {
+  --min-width: 60vw;
+  --max-width: 80vw;
+  --min-width-px: 300px;
+  --max-width-px: 500px;
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: clamp(var(--min-width-px), 60vw, var(--max-width-px));
+  max-width: min(var(--vw) * var(--max-width), var(--max-width-px));
+  contain: style paint;
+  max-height: 95vh;
+  max-height: 95dvh;
+  overflow: auto;
+  padding: 18px 30px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--border-radius-16);
+  background-color: var(--color-bg-main);
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &:not([open]) {
+    display: none !important;
+  }
+}
